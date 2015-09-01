@@ -2,6 +2,7 @@ require "io/console"
 
 module Cursorable
   KEYMAP = {
+    "c" => :show_moves,
     " " => :space,
     "h" => :left,
     "j" => :down,
@@ -41,10 +42,15 @@ module Cursorable
     when :ctrl_c
       exit 0
     when :return, :space
+      # puts @cursor_pos
       @cursor_pos
+      # selecting piece return start coordinate
+      # starting_move(@cursor_pos)
     when :left, :right, :up, :down
       update_pos(MOVES[key])
       nil
+    when :show_moves
+      show_moves
     else
       puts key
     end
@@ -65,6 +71,17 @@ module Cursorable
 
     return input
   end
+
+  def show_moves
+   @board.check_moves(@cursor_pos)
+  end
+
+  def starting_move(pos)
+    #dup the board to get all the possible positions
+    @board.move(pos, [2,1])
+  end
+
+
 
   def update_pos(diff)
     new_pos = [@cursor_pos[0] + diff[0], @cursor_pos[1] + diff[1]]
