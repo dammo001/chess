@@ -49,17 +49,17 @@ HORIZONTAL_DIFFS = [[-1,0], [1,0], [0,-1], [0,1]]
 
 DIAGONAL_DIFFS = [[-1,-1], [-1,1], [1,-1], [1,1]] 
 
-def validate_move(end_pos, board, orientation)
+def validate_move(end_pos, board)
 		possible_positions = [] 
 		self.position[0] = start_x
 		self.position[1] = start_y 
 
 
-		DIFFS.each do |arr|
-			new_pos = [(arr[0] + start_x), (arr[1] + start_y)]
+		DIFFS.each do |diffs|
+			new_pos = [(diffs[0] + start_x), (diffs[1] + start_y)]
 			until board[new_pos].occupied? || out_of_bounds?(new_pos) 
 				possible_positions << new_pos 
-				new_pos = [new_pos[0] + start_x, new_pos[1] + start_y]
+				new_pos = [new_pos[0] + diffs[0], new_pos[1] + arr[1]
 			end
 
 		end
