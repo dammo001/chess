@@ -12,14 +12,26 @@ class Board
 
 	attr_accessor :grid
 
-	def initialize
+	def initialize(truth)
 		@grid = Array.new(8) { Array.new(8) } 
-		set_board
-		place_royals
-		place_pawns
-		set_top_royals
-		set_bottom_royals
+		if truth 
+			set_board
+			place_royals
+			place_pawns
+			set_top_royals
+			set_bottom_royals
+		else
+			set_board
+		end
+		
 	end
+
+
+
+
+
+
+	private 
 
 	def set_board
 		@grid.each_with_index do |row,idx|
