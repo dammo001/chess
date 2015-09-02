@@ -10,7 +10,7 @@ class Board
 
 	attr_accessor :grid
 
-	def initialize(truth)
+	def initialize(truth, grid = nil)
 		@grid = Array.new(8) { Array.new(8) }
 		if truth
 			set_board
@@ -19,8 +19,9 @@ class Board
 			set_top_royals
 			set_bottom_royals
 		else
-			set_board
+			@grid = grid
 		end
+
 
 	end
 
@@ -145,11 +146,10 @@ class Board
 	end
 
 	def check_moves(pos)
-		self[pos].show_moves(self)
+		piece = self[pos]
+		valid_moves = piece.show_moves(self)
+		piece.check_for_check(self, valid_moves)
 	end
-
-
-
 
 	def [](pos)
 		row, col = pos
@@ -161,21 +161,67 @@ class Board
 		@grid[row][col] = mark
 	end
 
-
-
 	def move(start, end_pos)
 		if self[start].validate_move(end_pos, self)
 			self[end_pos] = dup_piece(self[start], end_pos)
 			self[start] = NullPiece.new
 		end
+	end
+
+	def dup
+		new_grid = @grid.map do |row|
+			row.map do |piece|
+				piece.dup
+			end
+		end
+		Board.new(false, new_grid)
+	end
+
+
+	def move!(start, end_pos)
+			self[end_pos] = dup_piece(self[start], end_pos)
+			self[start] = NullPiece.new
+	end
+
+
+	def in_check?(color)
+		king = find_king(color)
+		@grid.flatten.any? do |piece|
+			piece.show_moves(self).include?(king)
+		end
 
 	end
+
+
 
 	def dup_piece(piece, pos)
 		piece.class.new(pos, piece.color)
 	end
 
 
+	def find_king(color)
+		found_king = nil
+		get_kings.each do |king|
+			found_king = king if king.color == color
+		end
+
+		found_king.position
+	end
+
+
+
+	def get_kings
+		kings = []
+		(0..7).each do |row|
+			(0..7).each do |col|
+				piece = @grid[row][col]
+				if piece.is_a?(King)
+					kings << piece
+				end
+			end
+		end
+		kings
+	end
 
 
 	def occupied?(pos)

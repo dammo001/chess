@@ -15,6 +15,55 @@ class Piece
 	end
 
 
+
+
+
+	def check_for_check(board, positions)
+
+		positions.reject do |poss|
+			#create a dup board
+			# check_board = Board.new(false)
+			#
+			# #set the first piece, which is self @ poss
+			# check_board[poss] = self.class.new([poss],self.color)
+
+			#dup rest of board, excluding self @ original position
+			check_board = board.dup
+			check_board.move!(self.position, poss)
+			check_board.in_check?(self.color)
+		end
+	end
+
+
+
+
+
+			# board.grid.each_with_index do |row, row_num|
+			# 	row.each_with_index do |piece, col_num|
+			# 		unless (([row_num, col_num] == self.position) || ([row_num, col_num] == poss))
+			# 			old_piece = board.grid[row_num][col_num]
+			# 			check_board.grid[row_num][col_num] = old_piece.class.new([row_num, col_num], old_piece.color)
+			# 		end
+			# 	end
+			# end
+
+
+			#iterate through board calling show_move for opposing positions
+	# 		check_board.grid.each do |row|
+	# 			row.each do |piece|
+	# 				check_board.get_king.each do |king|
+	# 					if piece.show_moves(check_board).any? {|el| el == king.position}
+	# 						delete_positions << king.position
+	# 					end
+	# 				end
+	# 			end
+	# 		end
+	# 		delete_positions
+	# 		#remove poss if opposing_positions.any?(king.position)
+	# 	end
+	# end
+
+
 	def out_of_bounds?(pos)
 		pos.any? {|el| el < 0 || el > 7 }
 	end
@@ -28,7 +77,7 @@ end
 
 class NullPiece < Piece
 
-	def initialize
+	def initialize(position = nil, color = nil)
 		@value = "   "
 		@color = :none
 	end
@@ -70,7 +119,7 @@ DIAGONAL_DIFFS = [[-1,-1], [-1,1], [1,-1], [1,1]]
 
 		end
 
-		return true if possible_positions.include?(end_pos)
+		return true if check_for_check(board, possible_positions).include?(end_pos)
 		return false
 
 	end
@@ -324,15 +373,19 @@ class Pawn < Piece
 		when :black
 			BLACK_DIFFS.each do |diff|
 				new_pos = [(diff[0] + start_x), (diff[1] + start_y)]
-				if board[new_pos].occupied? && (board[new_pos].color != self.color)
-					possible_moves << new_pos
+				unless out_of_bounds?(new_pos)
+					if board[new_pos].occupied? && (board[new_pos].color != self.color)
+						possible_moves << new_pos
+					end
 				end
 			end
 		when :white
 			WHITE_DIFFS.each do |diff|
 				new_pos = [(diff[0] + start_x), (diff[1] + start_y)]
-				if board[new_pos].occupied? && (board[new_pos].color != self.color)
-					possible_moves << new_pos
+				unless out_of_bounds?(new_pos)
+					if board[new_pos].occupied? && (board[new_pos].color != self.color)
+						possible_moves << new_pos
+					end
 				end
 			end
 		end

@@ -39,6 +39,7 @@ class Game
 			start_pos, end_pos = @current_player.get_move(display)
 		end
 		board.move(start_pos, end_pos)
+		board.get_kings
 	end
 
 	def switch_player
